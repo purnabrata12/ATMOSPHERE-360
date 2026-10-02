@@ -1,0 +1,99 @@
+
+# ==========================================
+# ATMOSPHERE 360 - .gitignore
+# Python Flask | HTML | CSS | JS | MySQL
+# ==========================================
+
+# 1. Python Virtual Environment
+.venv/
+venv/
+env/
+ENV/
+
+# 2. Python Cache Files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+# 3. Environment Variables & Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# 4. Flask Files
+instance/
+.flaskenv
+*.log
+flask_session/
+
+# 5. Local Database Files
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# 6. Testing & Coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# 7. JavaScript Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 8. Build & Distribution
+dist/
+build/
+*.egg-info/
+.eggs/
+*.egg
+
+# 9. IDE & Editor Settings
+.idea/
+.vscode/
+*.code-workspace
+*.swp
+*.swo
+*~
+
+# 10. Windows & macOS System Files
+.DS_Store
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# 11. Temporary Files
+*.tmp
+*.temp
+*.bak
+*.old
+*.backup
+.cache/
+temp/
+tmp/
+
+# 12. Local Archives
+*.zip
+*.rar
+*.7z
+
+# ==========================================
+# IMPORTANT: Keep these files on GitHub
+# ==========================================
+
+!.env.example
+!requirements.txt
+!README.md
+!start_windows.bat
+!database/*.sql

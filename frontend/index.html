@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#081d35"><meta name="description" content="Atmosphere 360 — explore accurate weather forecasts, air quality, historical radar and the globe.">
+  <title>Atmosphere 360 · Explore the Weather</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+  <script defer src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script defer src="https://unpkg.com/globe.gl@2.41.0/dist/globe.gl.min.js"></script>
+  <script defer type="module" src="/js/app.js"></script>
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <div class="app-shell">
+    <header class="site-header">
+      <div class="header-top">
+        <a class="brand" href="/" aria-label="Atmosphere 360 home"><span class="brand-icon"><i data-lucide="orbit"></i></span><span><b>ATMOSPHERE<span class="brand-accent">360</span></b><small>EXPLORE THE ELEMENTS</small></span></a>
+        <form class="search" id="searchForm" autocomplete="off" role="search">
+          <i data-lucide="search" class="search-icon"></i>
+          <input id="searchInput" type="search" placeholder="Search city, region, or country..." aria-label="Search locations" maxlength="100" required>
+          <button class="search-submit" aria-label="Search" type="submit"><i data-lucide="arrow-right"></i></button>
+          <div class="suggestions" id="suggestions" hidden role="listbox"></div>
+        </form>
+        <div class="header-actions">
+          <button class="icon-btn" id="geoBtn" title="Use my location" aria-label="Use my current location"><i data-lucide="locate-fixed"></i></button>
+          <button class="icon-btn" id="favoriteBtn" title="Save location" aria-label="Save current location"><i data-lucide="star"></i></button>
+          <button class="units-btn" id="unitBtn" aria-label="Change temperature unit">°C <span> / °F</span></button>
+          <button class="icon-btn" id="themeBtn" title="Toggle theme" aria-label="Toggle color theme"><i data-lucide="moon"></i></button>
+        </div>
+      </div>
+      <nav class="tab-nav" aria-label="Weather views" id="navigation">
+        <button class="nav-link active" data-view="today"><i data-lucide="house"></i> Today</button>
+        <button class="nav-link" data-view="hourly"><i data-lucide="clock-3"></i> Hourly</button>
+        <button class="nav-link" data-view="daily"><i data-lucide="calendar-days"></i> 10-day</button>
+        <button class="nav-link" data-view="radar"><i data-lucide="radar"></i> Weather radar</button>
+        <button class="nav-link" data-view="minute"><i data-lucide="cloud-drizzle"></i> Next 60 min</button>
+        <button class="nav-link" data-view="monthly"><i data-lucide="calendar-range"></i> Monthly</button>
+        <button class="nav-link" data-view="air"><i data-lucide="wind"></i> Air quality</button>
+        <button class="nav-link" data-view="health"><i data-lucide="activity"></i> Activities</button>
+        <button class="nav-link" data-view="globe"><i data-lucide="earth"></i> Explore globe</button>
+      </nav>
+    </header>
+
+    <div id="status" class="status" role="status" hidden></div>
+    <div class="location-line"><div><span class="eyebrow">YOUR WEATHER WINDOW</span><h1 id="locationName">Dehradun</h1><p id="locationRegion">Uttarakhand, India</p></div><div class="time-block"><span class="live-dot"></span><span id="localClock">Local time loading...</span><small id="updatedTime">Waiting for forecast</small></div></div>
+
+    <main id="mainContent">
+      <section id="view-today" class="view">
+        <div class="today-grid">
+          <article class="hero-card" id="heroCard" data-weather="clear">
+            <div class="hero-content"><div class="hero-top"><span class="pill"><i data-lucide="circle-dot"></i> CURRENT CONDITIONS</span><span id="heroDate">TODAY</span></div>
+              <div class="hero-center"><div><div class="hero-temperature"><span id="currentTemp">--</span><span class="degree" id="heroDegree">°C</span></div><div id="conditionText" class="condition-text">Loading live forecast…</div><div class="feels" id="feelsTemp">Feels like --</div></div><div class="big-weather-icon" id="mainWeatherIcon" aria-hidden="true">☀️</div></div>
+              <div class="hero-bottom"><div><span>HIGH</span><strong id="todayHigh">--</strong></div><div><span>LOW</span><strong id="todayLow">--</strong></div><div><span>CHANCE OF RAIN</span><strong id="rainChance">--</strong></div><div class="hero-divider"></div><p id="heroDescription">Discover what the day has in store.</p></div>
+            </div><span class="hero-orb orb-a"></span><span class="hero-orb orb-b"></span>
+          </article>
+          <article class="card highlight-card"><div class="section-heading"><div><span class="eyebrow">ATMOSPHERE AT A GLANCE</span><h2>Weather details</h2></div><i data-lucide="cloud-sun"></i></div>
+            <div class="metric-grid" id="todayMetrics"><div class="skeleton tall"></div></div>
+          </article>
+        </div>
+        <div class="dashboard-grid">
+          <article class="card chart-card"><div class="section-heading"><div><span class="eyebrow">YOUR NEXT 24 HOURS</span><h2>Temperature trend</h2></div><button class="text-action" data-go="hourly">Full forecast <i data-lucide="arrow-up-right"></i></button></div><div class="chart-wrap"><canvas id="todayChart" aria-label="Forecast temperature over the next 24 hours" role="img"></canvas></div><div class="chart-footer"><span><b class="legend-dot"></b> Forecast temperature</span><small>Open-Meteo model data</small></div></article>
+          <article class="card sun-card"><div class="section-heading"><div><span class="eyebrow">DAYLIGHT TRACKER</span><h2>Sunrise & sunset</h2></div><i data-lucide="sunset"></i></div><div class="sun-art"><div class="sun-disc"></div><div class="horizon"></div></div><div class="sun-row"><div><i data-lucide="sunrise"></i><span>Sunrise</span><strong id="sunrise">--:--</strong></div><div><i data-lucide="sunset"></i><span>Sunset</span><strong id="sunset">--:--</strong></div></div><p class="subdued" id="daylight">Daylight information loading…</p></article>
+        </div>
+        <div class="bottom-grid"><article class="card"><div class="section-heading"><div><span class="eyebrow">PLAN AHEAD</span><h2>Upcoming days</h2></div><button class="text-action" data-go="daily">10-day outlook <i data-lucide="arrow-up-right"></i></button></div><div id="todayDays" class="mini-days"></div></article><article class="world-cta"><div><span class="eyebrow">EXPLORE BEYOND YOUR CITY</span><h2>The world has<br>its own weather.</h2><p>Spin the globe, tap anywhere, and discover the conditions there.</p><button class="primary-btn" data-go="globe">Explore Earth <i data-lucide="arrow-up-right"></i></button></div><div class="cta-planet">🌐</div></article></div>
+      </section>
+
+      <section id="view-hourly" class="view" hidden><div class="page-heading"><span class="eyebrow">HOUR BY HOUR</span><h2>A closer look at the next 48 hours</h2><p>Explore temperature, precipitation and wind patterns through interactive charts.</p></div><article class="card"><div class="section-heading"><h3>Upcoming hours</h3><span class="tiny-label">Scroll to explore →</span></div><div class="hour-strip" id="hourlyCards"></div></article><div class="dashboard-grid"><article class="card chart-card"><div class="section-heading"><h3>Temperature</h3><span class="tiny-label" id="tempAxisUnit">°C</span></div><div class="chart-wrap"><canvas id="hourlyChart"></canvas></div></article><article class="card chart-card"><div class="section-heading"><h3>Rain probability</h3><span class="tiny-label">%</span></div><div class="chart-wrap"><canvas id="precipChart"></canvas></div></article></div><article class="card"><div class="section-heading"><h3>Wind speed</h3><span class="tiny-label">km/h</span></div><div class="chart-wrap short"><canvas id="windChart"></canvas></div></article></section>
+
+      <section id="view-daily" class="view" hidden><div class="page-heading"><span class="eyebrow">PLAN WITH CONFIDENCE</span><h2>Your next 10 days, at a glance</h2><p>Explore detailed daily conditions. Select a day to learn more.</p></div><div class="dashboard-grid wide-left"><article class="card"><div id="dailyList" class="daily-list"></div><div class="details-panel" id="dayDetails" aria-live="polite">Select a day to view its details.</div></article><article class="card"><div class="section-heading"><h3>Highs & lows</h3><i data-lucide="chart-no-axes-combined"></i></div><div class="chart-wrap large"><canvas id="dailyChart"></canvas></div><p class="subdued">Forecast estimates may change as new model runs become available.</p></article></div></section>
+
+      <section id="view-radar" class="view" hidden><div class="page-heading"><span class="eyebrow">LIVE MAP EXPLORER</span><h2>See the weather moving</h2><p>Explore observed historical precipitation radar and selected-location weather layers.</p></div><article class="card map-card"><div class="map-toolbar"><label>Map layer <select id="layerSelect"><option value="radar">Past precipitation radar</option><option value="temperature">Local temperature marker</option><option value="cloud">Local cloud cover marker</option><option value="wind">Local wind marker</option></select></label><span id="radarTimestamp" class="map-stamp">Preparing radar…</span></div><div id="radarMap" aria-label="Interactive weather map"></div><div class="radar-controls"><button class="circle-play" id="radarPlay" aria-label="Play past radar frames"><i data-lucide="play"></i></button><input id="radarSlider" type="range" value="0" min="0" max="0" aria-label="Historical radar frame"><span id="radarFrameCount">0 frames</span></div><p class="map-notice" id="radarNotice">Radar frames show past observations, not a future forecast. Coverage varies by region.</p><div class="radar-legend">Intensity <span class="legend-gradient"></span> light → heavy</div></article></section>
+
+      <section id="view-minute" class="view" hidden><div class="page-heading"><span class="eyebrow">SHORT-TERM OUTLOOK</span><h2>The next 60 minutes</h2><p>Available 15-minute model-based precipitation estimates for your selected location.</p></div><article class="card"><p class="info-inline" id="minuteNotice">Loading local precipitation outlook…</p><div class="minute-cards" id="minuteCards"></div><div class="chart-wrap"><canvas id="minuteChart"></canvas></div></article></section>
+
+      <section id="view-monthly" class="view" hidden><div class="page-heading"><span class="eyebrow">EXTENDED OUTLOOK</span><h2>Weather calendar</h2><p>Published model outlooks are displayed only for days with available forecast data.</p></div><article class="card"><div class="section-heading"><h3 id="monthTitle">This month</h3><span class="tiny-label">16-day forecast availability</span></div><div class="month-weekdays"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div><div class="month-grid" id="monthlyGrid"></div><p class="info-inline">Dates beyond the available forecast window are intentionally marked unavailable. They are not invented forecasts.</p></article></section>
+
+      <section id="view-air" class="view" hidden><div class="page-heading"><span class="eyebrow">THE AIR AROUND YOU</span><h2>Air quality intelligence</h2><p>Model-based estimates from Open-Meteo / CAMS, using the US AQI scale.</p></div><div class="dashboard-grid"><article class="card aqi-hero"><span class="eyebrow">CURRENT US AIR QUALITY INDEX</span><div class="aqi-reading"><span id="aqiNumber">--</span><div><h3 id="aqiLabel">Loading...</h3><p id="aqiMessage">Checking air quality for this location.</p></div></div><div class="aqi-scale"></div><div class="aqi-ticks"><span>0</span><span>50</span><span>100</span><span>150</span><span>200</span><span>300+</span></div><p class="subdued">Air quality data is modeled, and regional availability/resolution can vary.</p></article><article class="card"><div class="section-heading"><h3>Pollutant details</h3><i data-lucide="waves"></i></div><div class="pollutant-grid" id="pollutants"></div></article></div><article class="card chart-card"><div class="section-heading"><h3>Air quality trend</h3><span class="tiny-label">US AQI · next 48h</span></div><div class="chart-wrap"><canvas id="airChart"></canvas></div></article></section>
+
+      <section id="view-health" class="view" hidden><div class="page-heading"><span class="eyebrow">MAKE THE MOST OF TODAY</span><h2>Weather & outdoor activities</h2><p>Simple activity pointers based on the selected location's forecast.</p></div><article class="activity-head"><div><span class="eyebrow">TODAY'S OUTDOOR SNAPSHOT</span><h3 id="healthSummary">Checking conditions…</h3><p>Use local advisories and your own judgment when planning activities.</p></div><i data-lucide="footprints"></i></article><div class="activity-grid" id="healthList"></div></section>
+
+      <section id="view-globe" class="view" hidden><div class="page-heading"><span class="eyebrow">AN ENTIRE PLANET TO EXPLORE</span><h2>Where in the world?</h2><p>Drag to spin the Earth. Click any location to load its coordinates and weather.</p></div><article class="globe-shell"><div class="globe-top"><span><i data-lucide="orbit"></i> INTERACTIVE EARTH</span><span id="globeStatus">Drag · Zoom · Tap to explore</span></div><div id="globeContainer" aria-label="Interactive 3D globe"></div><div class="globe-bottom"><div><b>Global weather exploration</b><p>The selected coordinates open directly in your weather dashboard.</p></div><button class="secondary-btn" data-go="radar">Explore 2D radar <i data-lucide="arrow-right"></i></button></div></article><p class="subdued">Globe image and city lookup require an internet connection. For devices without WebGL, use the search bar or 2D map.</p></section>
+    </main>
+
+    <footer class="footer"><div><b>ATMOSPHERE<span class="brand-accent">360</span></b><span>Explore the world. Understand the weather.</span></div><div><a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Weather: Open-Meteo</a><a href="https://www.rainviewer.com/" target="_blank" rel="noopener noreferrer">Radar: RainViewer</a><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors</a><button id="privacyOpen">Privacy choices</button><a href="/admin">Admin</a></div></footer>
+  </div>
+  <aside id="privacyBanner" class="privacy-banner" role="dialog" aria-label="Optional analytics consent" hidden><div><strong>Your privacy, your choice.</strong><p>Weather works without tracking. Optionally allow short-lived search logs that include your IP address and the city you manually choose. Your precise browser location is not logged. Admin-only access; configurable deletion after 30 days.</p></div><button id="privacyDecline" class="secondary-btn">No thanks</button><button id="privacyAccept" class="primary-btn">Allow analytics</button></aside>
+  <dialog id="privacyDialog" class="privacy-dialog"><form method="dialog"><button class="dialog-close" aria-label="Close">×</button><h2>Privacy controls</h2><p>Only with your agreement, deliberately submitted city/globe selections can be saved with your IP and time in the private admin dashboard. Current-location actions are excluded. Logs are retained for a configurable period (30 days by default). You may turn analytics off here; past entries are removed by the administrator's retention tool.</p><div class="dialog-actions"><button type="button" class="secondary-btn" id="privacyDisable">Decline analytics</button><button type="button" class="primary-btn" id="privacyEnable">Allow analytics</button></div></form></dialog>
+</body>
+</html>
