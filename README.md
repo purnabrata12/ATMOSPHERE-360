@@ -141,9 +141,9 @@ Rotate, zoom and click a point on Earth to retrieve its forecast. The weather re
 
 <br />
 
-| Search-log export | MySQL search-log records |
-|:---:|:---:|
-| <img src="docs/screenshots/15-search-history-export.png" alt="Opt-in search history export" width="100%" /> | <img src="docs/screenshots/16-mysql-search-logs.png" alt="Local MySQL search logs" width="100%" /> |
+| Search-log export |
+|:---:|
+| <img src="docs/screenshots/15-search-history-export.png" alt="Opt-in search history export" width="100%" /> |
 
 > **Privacy reminder:** Review these screenshots before publishing publicly; redact any actual visitor addresses or other identifying information.
 
