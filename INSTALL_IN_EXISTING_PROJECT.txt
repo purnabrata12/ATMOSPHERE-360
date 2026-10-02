@@ -1,8 +1,0 @@
-ATMOSPHERE 360 - Premium GitHub documentation
-
-1. Stop no services: documentation installation does not require stopping Flask.
-2. Back up the current README.md if you want to keep your old introduction.
-3. Copy README.md and docs/ into the root of your existing ATMOSPHERE-360 folder.
-4. Merge docs/ and allow replacement of README.md; do NOT replace backend/, frontend/, .env or database files.
-5. On GitHub, README.md will load the banner from docs/assets/ and gallery images from docs/screenshots/.
-6. Preview README.md on GitHub to see the layout and badge images (badges require an internet connection).
